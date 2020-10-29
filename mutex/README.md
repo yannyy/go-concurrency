@@ -26,14 +26,13 @@ func main() {
             }
         }()
     }
-	
 	wg.Wait()
     
-    fmt.Println(counter)
+   fmt.Println(counter)
 }
 ```
 
-在https://tour.go-zh.org/里执行代码，执行结果为516264，并不是我们期望的1000000。原因是因为`counter++`并不是一个原子操作，它包含：
+在 https://tour.go-zh.org/ 里执行代码，执行结果为516264，并不是我们期望的1000000。原因是因为`counter++`并不是一个原子操作，它包含：
 
 1. 读取counter当前值
 2. 当前值+1
