@@ -87,20 +87,20 @@ import (
 
 type Counter struct {
 	mu sync.Mutex
-	Val int
+	val int
 }
 
 func (c *Counter) incr() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
-	c.Val++
+	c.val++
 }
 
 func (c *Counter) count() int {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	
-	return c.Val
+	return c.val
 }
 
 
@@ -130,20 +130,20 @@ func main() {
 ```go
 type Counter struct {
     sync.Mutex
-    Val int
+    val int
 }
 
 func (c *Counter) incr() {
     c.Lock()
     defer c.Unlock()
-    c.Val++
+    c.val++
 }
 
 func (c *Counter) count() int {
 	c.Lock()
 	defer c.Unlock()
 	
-	return c.Val
+	return c.val
 }
 ```
 
@@ -155,7 +155,7 @@ type Counter struct {
     AttrB int
 	
     sync.Mutex
-    Val int
+    val int
 }
 ```
 
