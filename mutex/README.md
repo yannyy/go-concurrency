@@ -26,9 +26,10 @@ func main() {
             }
         }()
     }
-	wg.Wait()
     
-   fmt.Println(counter)
+    wg.Wait()
+    
+    fmt.Println(counter)
 }
 ```
 
@@ -38,9 +39,9 @@ func main() {
 2. 当前值+1
 3. 结果保存到counter
 
-比如，10个goroutine同时读到counter的值是9，按照相同的逻辑+1，然后保存到变量身上。但是实际上，counter增加的总数应该是10，但是结果增加了1。
+比如，10个goroutine同时读到counter的值是9，按照相同的逻辑+1，然后保存到变量身上。counter增加的总数应该是10，但是实际上结果增加了1。
 
-修改一下代码，引入`sync.Mutex`对非原子操作的`counter++`进行保护，同时只能有一个goroutine对counter进行+1的操作：
+修改一下代码，引入`sync.Mutex`对非原子操作的`counter++`进行保护，同时只能有一个goroutine对counter进行`counter++`的操作：
 
 ```go
 package main
@@ -53,7 +54,7 @@ import (
 func main() {
     var counter int
     
-	var mu sync.Mutex
+    var mu sync.Mutex
     var wg sync.WaitGroup
     wg.Add(10)
     
@@ -67,8 +68,8 @@ func main() {
             }
         }()
     }
-	
-	wg.Wait()
+    
+    wg.Wait()
     
     fmt.Println(counter)
 }
@@ -95,6 +96,13 @@ func (c *Counter) incr() {
 	c.Val++
 }
 
+func (c *Counter) count() int {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	
+	return c.Val
+}
+
 
 func main() {
 	var counter Counter
@@ -110,10 +118,10 @@ func main() {
             }
         }()
     }
-	
-	wg.Wait()
     
-   fmt.Println(counter.Val)
+    wg.Wait()
+    
+    fmt.Println(counter.count())
 }
 ```
 
@@ -121,14 +129,21 @@ func main() {
 
 ```go
 type Counter struct {
-	sync.Mutex
-	Val int
+    sync.Mutex
+    Val int
 }
 
 func (c *Counter) incr() {
+    c.Lock()
+    defer c.Unlock()
+    c.Val++
+}
+
+func (c *Counter) count() int {
 	c.Lock()
 	defer c.Unlock()
-	c.Val++
+	
+	return c.Val
 }
 ```
 
@@ -136,11 +151,11 @@ func (c *Counter) incr() {
 
 ```go
 type Counter struct {
-	AttrA int
-	AttrB int
+    AttrA int
+    AttrB int
 	
-	sync.Mutex
-	Val int
+    sync.Mutex
+    Val int
 }
 ```
 
