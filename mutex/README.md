@@ -188,8 +188,8 @@ type Locker interface {
 	- 等待的时间小于1ms
 
 
-互斥锁利用三个状态标记锁的状态：
-![](stat.png)
+互斥锁利用三个状态标记锁的状态：  
+![](https://raw.githubusercontent.com/yannyy/go-concurrency/master/mutex/stat.png)
   
 
 ```go
